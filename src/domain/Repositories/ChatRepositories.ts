@@ -1,7 +1,9 @@
-import { IUser } from "../../infrastructure/database/dbModels/User";
+import { IChatModel } from "../../infrastructure/database/dbModels/ChatModel";
+import { IMessage } from "../../infrastructure/database/dbModels/MessageModel";
 
-export  interface AuthRepositories{
-    createUser(user: IUser): Promise<void>
-    updateProfileImage(userId: string, profileImage: string):Promise<void>
-    updateProfile(userId: string, username: string, displayName: string, profileImage: string):Promise<void>
-}                   
+export interface ChatRepositories {
+  checkChat(initiatorId: string, recipientId: string): Promise<IChatModel | null>;
+  newChat(initiatorId: string, recipientId: string): Promise<IChatModel | null>
+  fetchConversations(userId: string): Promise<IChatModel[]>
+  fetchMessages(chatId: string):Promise<IMessage[]>
+}
