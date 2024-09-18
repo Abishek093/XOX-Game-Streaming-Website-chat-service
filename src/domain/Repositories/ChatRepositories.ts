@@ -6,4 +6,6 @@ export interface ChatRepositories {
   newChat(initiatorId: string, recipientId: string): Promise<IChatModel | null>
   fetchConversations(userId: string): Promise<IChatModel[]>
   fetchMessages(chatId: string):Promise<IMessage[]>
+  fetchLastMessage(chatId: string): Promise<IMessage | null>
+  deleteMessage(id : string):Promise<void>
 }

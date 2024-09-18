@@ -10,6 +10,15 @@ export const createSocketIOServer = (server: HttpServer): SocketIOServer => {
     } 
   });
 
+  // io.use((socket, next) => {
+  //   const userId = socket.handshake.auth.userId;
+  //   if (!userId) {
+  //     return next(new Error("Invalid user ID"));
+  //   }
+  //   (socket as any).auth = { userId };
+  //   next();
+  // });
+
   io.on("connection", (socket) => {
     console.log("New client connected", socket.id);
 

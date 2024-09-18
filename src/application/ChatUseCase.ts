@@ -1,4 +1,6 @@
+import ChatModel from "../infrastructure/database/dbModels/ChatModel";
 import { MongoChatRepository } from "../infrastructure/Repositories/MongoChatRepository";
+import { getUnreadMessageCount } from "../utils/messageUtils";
 
 const chatRepositories = new MongoChatRepository();
 
@@ -23,3 +25,32 @@ export const FetchMessagesUseCase = async(chatId: string)=>{
   return messages
 }
 
+export const FetchLastMessageUseCase = async (chatId: string) => {
+  const lastMessage = await chatRepositories.fetchLastMessage(chatId);
+  return lastMessage;
+};
+
+export const DeleteMessageUseCase = async(id : string)=>{
+  const msg = await chatRepositories.deleteMessage(id)
+}
+
+export const fetchUnreadCountsUseCase = async (userId: string) => {
+  try {
+    // Fetch all chats that the user is part of
+    const chats = await ChatModel.find({ users: userId });
+
+    // Initialize an object to store unread counts
+    const unreadCounts: { [key: string]: number } = {};
+
+    // Loop through each chat and fetch the unread message count
+    for (const chat of chats) {
+      const unreadCount = await getUnreadMessageCount(chat.id.toString(), userId);
+      unreadCounts[chat.id.toString()] = unreadCount;
+    }
+
+    return unreadCounts;
+  } catch (error) {
+    console.error("Error in fetchUnreadCountsUseCase:", error);
+    throw new Error("Failed to fetch unread counts");
+  }
+};

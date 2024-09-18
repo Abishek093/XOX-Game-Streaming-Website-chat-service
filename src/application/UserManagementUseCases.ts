@@ -2,7 +2,7 @@ import { MongoAuthRepository } from "../infrastructure/Repositories/MongoAuthRep
 
 const AuthRepositories = new MongoAuthRepository()
 export const createUser = async(userData: any) => {
-    console.log(userData)
+    console.log("user management use case",userData)
     const response = await AuthRepositories.createUser(userData)
 };
 

@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IMessage extends Document {
-  _id?: mongoose.Types.ObjectId;
   chatId: mongoose.Types.ObjectId;
   sender: mongoose.Types.ObjectId;
   content?: string;
@@ -10,6 +9,7 @@ export interface IMessage extends Document {
     url: string;
   }[];
   repliedTo?: mongoose.Types.ObjectId;
+  seen: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -45,6 +45,10 @@ const MessageSchema: Schema<IMessage> = new Schema<IMessage>(
       type: Schema.Types.ObjectId,
       ref: 'Message',
     },
+    seen: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -52,5 +56,4 @@ const MessageSchema: Schema<IMessage> = new Schema<IMessage>(
 );
 
 const MessageModel = mongoose.model<IMessage>('Message', MessageSchema);
-
 export default MessageModel;

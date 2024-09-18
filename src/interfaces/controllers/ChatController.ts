@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { CheckChatUseCase, FetchConversationsUseCase, FetchMessagesUseCase, NewChatUseCase } from "../../application/ChatUseCase";
+import { CheckChatUseCase, DeleteMessageUseCase, FetchConversationsUseCase, FetchLastMessageUseCase, FetchMessagesUseCase, fetchUnreadCountsUseCase, NewChatUseCase } from "../../application/ChatUseCase";
 import { handleResponse } from "./responseHandler";
 import { uploadToS3 } from "../../utils/s3Uploader";
 
@@ -64,5 +64,39 @@ export const uploadMedia = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error uploading media:", error);
     handleResponse(res, 500, "Internal server error");
+  }
+};
+
+export const fetchLastMessage = async (req: Request, res: Response) => {
+  const { chatId } = req.params;
+  try {
+    const lastMessage = await FetchLastMessageUseCase(chatId);
+    handleResponse(res, 200, lastMessage);
+  } catch (error) {
+    handleResponse(res, 500, "Internal server error");
+  }
+};
+
+export const deleteMessage = async(req: Request, res: Response)=>{
+  const {id} = req.params
+  console.log("message id", id)
+  const msg = await DeleteMessageUseCase(id)
+  handleResponse(res, 200, "deleted succesfully")
+}
+
+
+export const fetchUnreadCountsController = async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.userId;
+    const unreadCounts = await fetchUnreadCountsUseCase(userId);
+    
+    if (unreadCounts) {
+      return handleResponse(res, 200, unreadCounts);
+    } else {
+      return handleResponse(res, 404, "No unread messages found");
+    }
+  } catch (error) {
+    console.error("Error fetching unread counts:", error);
+    return handleResponse(res, 500, "Failed to fetch unread counts");
   }
 };

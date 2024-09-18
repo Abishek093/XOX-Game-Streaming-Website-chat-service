@@ -162,5 +162,21 @@ export class MongoChatRepository implements ChatRepositories {
       throw new Error("Failed to fetch the messages")
     }
   }
+
+  async fetchLastMessage(chatId: string): Promise<IMessage | null> {
+    try {
+      const lastMessage = await MessageModel.findOne({ chatId })
+        .sort({ createdAt: -1 })
+        .populate('sender', 'displayName profileImage');
+      return lastMessage;
+    } catch (error) {
+      console.error("Error fetching last message:", error);
+      throw new Error("Failed to fetch the last message");
+    }
+  }
+  
+  async deleteMessage(id : string):Promise<void>{
+    const message = await MessageModel.findByIdAndDelete(id)
+  }
 }
 
